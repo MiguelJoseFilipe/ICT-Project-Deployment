@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonica Installation Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        pre {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            overflow-x: auto;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        .code-block {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+        .code-block button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .code-block button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            margin-top: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <h1>Setup OAI Corenetwork (OAI CN5G)</h1>
+    <p>OAI Core network, like a general 5G core, has many components such as AMF, SMF, AUSF, NRF, UDR, UDF, UPF (or SPGWF-tiny), Database (MySQL), and other functional elements. All these are configured and run as Docker containers. Hence, we use the federated repo: 
+        <a href="https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed" target="_blank">oai-cn5g-fed</a>.
+    </p>
+    <p>This setup is on the OAI-CN host, where you intend to deploy.</p>
+
+    <h2>Network setup</h2>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code1')">Copy</button>
+        <pre id="code1">
+            <code>sudo sysctl net.ipv4.conf.all.forwarding=1
+sudo iptables -P FORWARD ACCEPT</code>
+        </pre>
+    </div>
+
+    <h2>Step 4.1: Pull OAI Docker images</h2>
+    <p>Pull the OAI CN Docker images (if it is for the first-time setup) as described in 
+        <a href="https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed/-/blob/master/docs/RETRIEVE_OFFICIAL_IMAGES.md" target="_blank">
+            this guide
+        </a>.
+    </p>
+
+    <h2>Step 4.2: Clone oai-cn5g-fed (if it is not cloned already)</h2>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code2')">Copy</button>
+        <pre id="code2">
+            <code>cd
+git clone https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
+cd ~/oai-cn5g-fed/docker-compose</code>
+        </pre>
+    </div>
+    <p>In the <code>~/oai-cn5g-fed/docker-compose</code> folder, you will find several configuration YAML files for deploying different scenarios of the core. Our basic interest can be satisfied by the config file 
+        <code>docker-compose-basic-nrf.yaml</code>. Edit this file as follows:
+    </p>
+
+    <h3>Parameters to modify in the docker-compose-basic-nrf.yaml</h3>
+    <ul>
+        <li>MCC, MNC, SERVED_GUAMI_MNC, PLMN_SUPPORT_MNC, PLMN_SUPPORT_TAC. Ensure these parameters reflect your gNB configuration.</li>
+    </ul>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code3')">Copy</button>
+        <pre id="code3">
+            <code>oai-amf:
+    container_name: "oai-amf"
+    image: oaisoftwarealliance/oai-amf:v1.5.1
+    expose:
+        - 80/tcp
+        - 8080/tcp
+        - 38412/sctp
+    environment:
+        - TZ=Europe/Paris
+        - MCC=230 
+        - MNC=36
+        - REGION_ID=128
+        - AMF_SET_ID=1
+        ...
+        - SST_0=1
+        - SD_1=1</code>
+        </pre>
+    </div>
+
+    <h2>Step 4.3: Configuring UE information in core</h2>
+    <p>Edit the file <code>docker-compose/database/oai_db2.sql</code> in the oai-cn5g-fed repo to add UE info for authentication.</p>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code4')">Copy</button>
+        <pre id="code4">
+            <code>INSERT INTO `AuthenticationSubscription` ...
+('230360000070590', '5G_AKA', 'c053808154144dda5c24171d45e3bc0c', ..., '230360000070590');</code>
+        </pre>
+    </div>
+
+    <h2>Step 4.4: Deploying/Running OAI Core</h2>
+    <p>Deploy the core components for the basic NRF scenario using the command below:</p>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code5')">Copy</button>
+        <pre id="code5">
+            <code>python3 core-network.py --type start-basic</code>
+        </pre>
+    </div>
+    <p>To stop/undeploy, use:</p>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code6')">Copy</button>
+        <pre id="code6">
+            <code>python3 core-network.py --type stop-basic</code>
+        </pre>
+    </div>
+
+    <p>More help on different scenarios can be found by running:</p>
+    <div class="code-block">
+        <button onclick="copyToClipboard('#code7')">Copy</button>
+        <pre id="code7">
+            <code>python3 core-network.py --help</code>
+        </pre>
+    </div>
+</body>
+</html>

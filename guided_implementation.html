@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture du Réseau 5G</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom styles for layout adjustment to fix issues with dropdown widths */
+        #custom-configurator {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 30px;
+            justify-content: flex-start;
+        }
+
+        .config-item {
+            flex: 0 1 120px;
+            min-width: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 0;
+        }
+
+        .config-item label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .config-item select {
+            width: 100%;
+            max-width: 120px;
+            padding: 4px;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-container img {
+            width: 80px;
+            height: auto;
+            max-width: 80px;
+            display: inline-block;
+        }
+
+        /* Tab styles */
+        .tab-header-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .tab-header {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+        }
+
+        .tab-header.active {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .instructions-container {
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        /* Banner style */
+        .banner {
+            width: 100%;
+            height: 500px; /* Adjust height as needed */
+            background-image: url('/images/banner.png'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 20px;
+        }
+
+        /* Help button and video styles */
+        .help-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .help-button:hover {
+            background-color: #0056b3;
+        }
+
+        .video-container {
+            display: none; /* Initially hidden */
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            max-width: 866px;
+            height: 487px;
+        }
+
+        /* Hover button styles */
+        .hover-button-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hover-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .hover-button:hover {
+            background-color: #0056b3; /* Color on hover */
+        }
+
+        /* Hover image styles */
+        .hover-image {
+            display: none;
+            position: absolute;
+            top: 120%; /* Position below the button */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px; /* Adjust the width */
+            height: auto;
+            z-index: 10;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff; /* Image background */
+        }
+
+        /* Show the image when hovering over the container */
+        .hover-button-container:hover .hover-image {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!-- Header / Navigation -->
+<header>
+    <nav id="header-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li> 
+            <li><a href="5g.html">5G</a></li>
+            <li><a href="sdr.html">SDR</a></li>
+            <li><a href="project_examples.html">Project Examples</a></li>
+            <li><a href="guided_implementation.html">Guided Implementation</a></li>
+            <li><a href="qa_troubleshooting.html">Q&A / Troubleshooting</a></li>
+            <li><a href="http://localhost:3000">Forum</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h2>Configure your 5G architecture</h2>
+        <button class="help-button" id="help-button">Presentation video</button>
+        <div class="video-container" id="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/OfDs5V5nXTg?rel=0&showinfo=0&controls=1&modestbranding=1&fs=0&iv_load_policy=3&autohide=1" 
+                title="Guided implementation - Help" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>
+        </div>
+        
+
+        <!-- Hover Button with Image Display on Hover -->
+        <div class="hover-button-container">
+            <!-- Unique ID for the button -->
+            <button class="hover-button" id="hover-help-button">Possible architectures</button>
+            <!-- Image that appears on hover -->
+            <img src="https://i.ibb.co/7z7pJt0/Flow-Chart-Whiteboard-in-Red-Blue-Basic-Style.png" alt="Help Image" class="hover-image">
+        </div>
+        <p>Choose the appropriate options to configure your 5G network based on the components you are using. You can configure the UE, SDR, RAN, Core, and OS according to your preferences.</p>
+        <div id="custom-configurator">
+            <!-- UE Configuration -->
+            <div class="config-item">
+                <label for="ue">Select a UE:</label>
+                <select id="ue" onchange="handleSelectionChange()">
+                    <option value="">--Select--</option>
+                    <option value="smartphone">Smartphone</option>
+                    <option value="pc">PC</option>
+                    <option value="iot">NB-IoT</option>
+                </select>
+                <div class="image-container" id="ue-images">
+                    <img src="/images/phone.png" alt="Smartphone" id="ue-smartphone" />
+                    <img src="/images/pc.png" alt="PC" id="ue-pc" />
+                    <img src="/images/quectel.png" alt="NB-IoT" id="ue-iot" />
+                </div>
+            </div>
+
+            <!-- SDR Configuration -->
+            <div class="config-item">
+                <label for="sdr">Select a SDR:</label>
+                <select id="sdr" onchange="handleSelectionChange()">
+                    <option value="">--Select--</option>
+                    <option value="limesdr">LimeSDR</option>
+                    <option value="b210">B210</option>
+                </select>
+                <div class="image-container" id="sdr-images">
+                    <img src="/images/lime.png" alt="LimeSDR" id="sdr-limesdr" />
+                    <img src="/images/b210.png" alt="B210" id="sdr-b210" />
+                </div>
+            </div>
+
+            <!-- RAN Configuration -->
+            <div class="config-item">
+                <label for="ran">Select a RAN:</label>
+                <select id="ran" onchange="handleSelectionChange()">
+                    <option value="">--Select--</option>
+                    <option value="lte">LTE</option>
+                    <option value="5g">5G</option>
+                    <option value="sonicaNB-IoT">Sonica NB-IoT</option>
+                </select>
+                <div class="image-container" id="ran-images">
+                    <img src="/images/srs_ran_logo.png" alt="LTE" id="ran-lte" />
+                    <img src="/images/openair.png" alt="5G" id="ran-5g" />
+                    <img src="/images/sonica.png" alt="Sonica NB-IoT" id="ran-sonicaNB-IoT" />
+                </div>
+            </div>
+
+            <!-- Core Configuration -->
+            <div class="config-item">
+                <label for="core">Select a Core:</label>
+                <select id="core" onchange="handleSelectionChange()">
+                    <option value="">--Select--</option>
+                    <option value="open5gs">Open5GS</option>
+                    <option value="amf">AMF</option>
+                    <option value="sonicaCore">Sonica Core</option>
+                </select>
+                <div class="image-container" id="core-images">
+                    <img src="images/open5GS.png" alt="Open5GS" id="core-open5gs" />
+                    <img src="images/OIA.png" alt="AMF" id="core-amf" />
+                    <img src="images/sonica.png" alt="Sonica Core" id="core-sonicaCore" />
+                </div>
+            </div>
+
+            <!-- OS Configuration -->
+            <div class="config-item">
+                <label for="os">Select an OS:</label>
+                <select id="os" onchange="handleSelectionChange()">
+                    <option value="">--Select--</option>
+                    <option value="ubuntu">Ubuntu</option>
+                    <option value="centos">CentOS</option>
+                </select>
+                <div class="image-container" id="os-images">
+                    <img src="images/ubuntu.png" alt="Ubuntu" id="os-ubuntu" />
+                    <img src="images/centos.png" alt="CentOS" id="os-centos" />
+                </div>
+            </div>
+        </div>
+
+<!-- Instructions Tabs -->
+<div class="instructions-container">
+    <!-- Tab Header -->
+    <div class="tab-header-container">
+        <div class="tab-header active" onclick="openTab(event, 'ue-instruction')">UE</div>
+        <div class="tab-header" onclick="openTab(event, 'sdr-instruction')">SDR</div>
+        <div class="tab-header" onclick="openTab(event, 'ran-instruction')">RAN</div>
+        <div class="tab-header" onclick="openTab(event, 'core-instruction')">Core</div>
+        <div class="tab-header" onclick="openTab(event, 'os-instruction')">OS</div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="ue-instruction" class="tab-content active">
+        <iframe id="instruction-iframe" src="" title="UE Configuration"></iframe>
+    </div>
+    <div id="sdr-instruction" class="tab-content">
+        <iframe id="instruction-iframe" src="" title="SDR Configuration"></iframe>
+    </div>
+    <div id="ran-instruction" class="tab-content">
+        <iframe id="instruction-iframe" src="" title="RAN Configuration"></iframe>
+    </div>
+    <div id="core-instruction" class="tab-content">
+        <iframe id="instruction-iframe" src="" title="Core Configuration"></iframe>
+    </div>
+    <div id="os-instruction" class="tab-content">
+        <iframe id="instruction-iframe" src="" title="OS Configuration"></iframe>
+    </div>
+</div>
+
+    </section>
+    
+</main>
+
+<script>
+// Toggle Help Video
+    const helpButton = document.getElementById('help-button');
+    const videoContainer = document.getElementById('video-container');
+
+    helpButton.addEventListener('click', () => {
+        if (videoContainer.style.display === 'none' || videoContainer.style.display === '') {
+            videoContainer.style.display = 'block'; // Show video
+        } else {
+            videoContainer.style.display = 'none'; // Hide video
+        }
+    });
+window.onload = function () {
+    // Call handleSelectionChange on page load to set default states
+    handleSelectionChange();
+};
+
+function handleSelectionChange() {
+    // Get the selected values from each dropdown
+    const ue = document.getElementById('ue').value;
+    const sdr = document.getElementById('sdr').value;
+    const ran = document.getElementById('ran').value;
+    const core = document.getElementById('core').value;
+    const os = document.getElementById('os').value;
+
+    // Hide all image containers initially
+    document.querySelectorAll('.image-container').forEach(container => container.style.display = 'none');
+
+    // Update iframe sources based on selected dropdown values
+    updateTabContent(ue, sdr, ran, core, os);
+
+    // Show images based on selected dropdown value (if any)
+    if (ue) {
+        document.querySelectorAll('#ue-images img').forEach(img => img.style.display = 'none');
+        document.getElementById(`ue-${ue}`).style.display = 'inline-block'; // Show the selected UE image
+        document.getElementById('ue-images').style.display = 'flex'; // Ensure the container is visible
+    }
+    if (sdr) {
+        document.querySelectorAll('#sdr-images img').forEach(img => img.style.display = 'none');
+        document.getElementById(`sdr-${sdr}`).style.display = 'inline-block'; // Show the selected SDR image
+        document.getElementById('sdr-images').style.display = 'flex'; // Ensure the container is visible
+    }
+    if (ran) {
+        document.querySelectorAll('#ran-images img').forEach(img => img.style.display = 'none');
+        document.getElementById(`ran-${ran}`).style.display = 'inline-block'; // Show the selected RAN image
+        document.getElementById('ran-images').style.display = 'flex'; // Ensure the container is visible
+    }
+    if (core) {
+        document.querySelectorAll('#core-images img').forEach(img => img.style.display = 'none');
+        document.getElementById(`core-${core}`).style.display = 'inline-block'; // Show the selected Core image
+        document.getElementById('core-images').style.display = 'flex'; // Ensure the container is visible
+    }
+    if (os) {
+        document.querySelectorAll('#os-images img').forEach(img => img.style.display = 'none');
+        document.getElementById(`os-${os}`).style.display = 'inline-block'; // Show the selected OS image
+        document.getElementById('os-images').style.display = 'flex'; // Ensure the container is visible
+    }
+}
+
+function updateTabContent(ue, sdr, ran, core, os) {
+    // Assign the URL to each tab's iframe based on the dropdown selection
+    let ueInstructionURL = "/instructions/default-ue.html";
+    let sdrInstructionURL = "/instructions/default-sdr.html";
+    let ranInstructionURL = "/instructions/default-ran.html";
+    let coreInstructionURL = "/instructions/default-core.html";
+    let osInstructionURL = "/instructions/default-os.html";
+
+    // Set the URL for each tab based on the selection
+    if (ue) {
+        ueInstructionURL = `/instructions/ue-${ue}.html`; // Dynamically set URL for UE
+    }
+    if (sdr) {
+        sdrInstructionURL = `/instructions/sdr-${sdr}.html`; // Dynamically set URL for SDR
+    }
+    if (ran) {
+        ranInstructionURL = `/instructions/ran-${ran}.html`; // Dynamically set URL for RAN
+    }
+    if (core) {
+        coreInstructionURL = `/instructions/core-${core}.html`; // Dynamically set URL for Core
+    }
+    if (os) {
+        osInstructionURL = `/instructions/os-${os}.html`; // Dynamically set URL for OS
+    }
+
+    // Update each iframe's `src` based on the selected option
+    document.getElementById('ue-instruction').querySelector('iframe').src = ueInstructionURL;
+    document.getElementById('sdr-instruction').querySelector('iframe').src = sdrInstructionURL;
+    document.getElementById('ran-instruction').querySelector('iframe').src = ranInstructionURL;
+    document.getElementById('core-instruction').querySelector('iframe').src = coreInstructionURL;
+    document.getElementById('os-instruction').querySelector('iframe').src = osInstructionURL;
+}
+
+function openTab(evt, tabName) {
+    let tabcontent, tabheader;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
+    tabheader = document.getElementsByClassName("tab-header");
+    for (let i = 0; i < tabheader.length; i++) {
+        tabheader[i].classList.remove("active");
+    }
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+
+</script>
+
+</body>
+</html>
